@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 from datos import font1
 from util import hexa_a_matriz, a_bit
@@ -10,16 +11,14 @@ for d in font1:
     # print(m)
     X.append(m)
 X = np.array(X)
-# Y = np.eye(32)
 
 utils.set_random_seed(2)
 
-# relu = lambda x: activations.relu(x, threshold=0.5, max_value=1)
 
 autoencoder1 = models.Sequential()
 
-n = 0.007
-epocas = 5000
+n = 0.002
+epocas = 10000
 activacion_latente = 'sigmoid'
 
 # autoencoder1.add(layers.Dense(35,activation = 'sigmoid', input_dim=35))
@@ -49,10 +48,20 @@ for i in range(len(X)):
         print(res[i])
         cantErrores += 1
 
+filename = str(n)+"_"+str(epocas)+"_"+activacion_latente
+
 print(f"porcentaje de error: {cantErrores * 100 / len(X)}%")
 if cantErrores == 0:
-    autoencoder1.save(str(n)+"_"+str(epocas)+"_"+activacion_latente+".keras")
+    autoencoder1.save(filename+".keras")
 
 
+#np.save(filename+".npy", historia.history)
+#history = np.load(filename+".npy", allow_pickle="TRUE").item()
 
+plt.plot(historia.history['loss'])
+plt.title(f"Entrenamiento n:{n}")
+plt.xlabel("pérdida")
+plt.ylabel("épocas")
+plt.legend(["entrenamiento"],loc="upper right")
+plt.savefig(filename+".png")
 
