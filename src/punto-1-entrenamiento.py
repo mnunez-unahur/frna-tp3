@@ -32,7 +32,6 @@ metrica = metrics.BinaryAccuracy(name="binary accuracy", dtype=None, threshold=0
 
 
 autoencoder1 = models.Sequential([codificador,decodificador])
-# autoencoder1.compile(loss = 'MSE', optimizer = opt, metrics = [metrica])
 autoencoder1.compile(loss = 'binary_crossentropy', optimizer = opt, metrics = [metrica])
 historia = autoencoder1.fit(X, X, epochs = epocas, batch_size = 1)
 
@@ -56,8 +55,8 @@ if cantErrores == 0:
 
 plt.plot(historia.history['loss'])
 plt.title(f"Entrenamiento n:{n} - épocas: {epocas}")
-plt.xlabel("pérdida")
-plt.ylabel("épocas")
+plt.xlabel("Épocas")
+plt.ylabel("Pérdida")
 plt.legend(["entrenamiento"],loc="upper right")
 plt.savefig(f"fit_{epocas}_{n}.png")
 
