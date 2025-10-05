@@ -2,20 +2,38 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from datos import font1
-from util import hexa_a_matriz, a_bit
+from util import hexa_a_matriz, a_bit, distorsionar
 from keras import models, layers, optimizers, metrics, utils, activations
 
+utils.set_random_seed(2)
 X = []
+Y = []
+
+cantidad_diferentes = 0
 for d in font1:
     m = hexa_a_matriz(d).reshape(35)
     X.append(m)
-X = np.array(X)
+    Y.append(m)
+    # agregamos versiones distorsionadas
+    for i in range(10):
+        con_ruido = distorsionar(m, 0.3)
+        X.append(con_ruido)
+        Y.append(m)
+        if not np.array_equal(m, con_ruido):
+            print(f"entrada         : {m}")
+            print(f"salida con ruido: {con_ruido}")
+            cantidad_diferentes += 1
 
-utils.set_random_seed(2)
+print(f"cantidad de muestras con ruido: {cantidad_diferentes}/{len(X)}")
+
+
+X = np.array(X)
+Y = np.array(Y)
+
 
 
 n = 0.008
-epocas = 3500
+epocas = 2000
 
 codificador = models.Sequential()
 codificador.add(layers.Input(shape=(35,)))
@@ -33,25 +51,27 @@ metrica = metrics.BinaryAccuracy(name="binary accuracy", dtype=None, threshold=0
 
 autoencoder1 = models.Sequential([codificador,decodificador])
 autoencoder1.compile(loss = 'binary_crossentropy', optimizer = opt, metrics = [metrica])
-historia = autoencoder1.fit(X, X, epochs = epocas, batch_size = 1)
+
+
+# entrenamiento
+historia = autoencoder1.fit(X, Y, epochs = epocas, batch_size = 1)
 
 res = a_bit(autoencoder1.predict(X))
 
 cantErrores = 0
 for i in range(len(X)):
-    if not np.array_equal(X[i], res[i]):
+    if not np.array_equal(Y[i], res[i]):
         print("--------------------------------------   ")
-        print (X[i])
-        print(res[i])
+        print("Entrada: ", X[i])
+        print("Salida Esperada: ", Y[i])
+        print("Salida Obtenida", res[i])
         cantErrores += 1
 
-# filename = str(n)+"_"+str(epocas)+"_"+activacion_latente
-archivo_base = f"{epocas}_{n}"
 
 print(f"porcentaje de error: {cantErrores * 100 / len(X)}%")
 if cantErrores == 0:
-    codificador.save("punto-1-codificador.keras")
-    decodificador.save("ponto-1-decodificador.keras")
+    codificador.save("punto-2-codificador.keras")
+    decodificador.save("punto-2-decodificador.keras")
 
 plt.plot(historia.history['loss'])
 plt.title(f"Entrenamiento n:{n} - épocas: {epocas}")

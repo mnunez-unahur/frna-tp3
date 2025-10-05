@@ -34,3 +34,14 @@ def a_bit(valores, umbral=0.5):
 
     return np.array(res)
 
+
+def distorsionar(entrada, desviacion=0.2):
+    # generamos random gausiano
+    ruido = np.random.normal(0, desviacion, len(entrada))
+
+    # le sumamos el ruido a la entrada
+    salida = entrada.copy()+ruido
+
+    return salida
+
+

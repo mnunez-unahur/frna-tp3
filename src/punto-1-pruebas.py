@@ -14,8 +14,8 @@ for d in font1:
 X = np.array(X)
 
 
-codificador=models.load_model("codificador.keras")
-decodificador=models.load_model("decodificador.keras")
+codificador=models.load_model("punto-1-codificador.keras")
+decodificador=models.load_model("punto-1-decodificador.keras")
 autoencoder1 = models.Sequential([codificador,decodificador])
 
 res = a_bit(autoencoder1.predict(X))
@@ -48,8 +48,8 @@ plt.scatter(x_latente, y_latente)
 plt.savefig("punto-1-predict-latente.png")
 plt.clf() # limpio la imagen
 
-result = a_bit(decodificador.predict(np.array([[5.47945082e-01, 6.63289547e-01]])))
-# result = a_bit(decodificador.predict(np.array([[5, 6]])))
+#result = a_bit(decodificador.predict(np.array([[2.66707186e-02, 1.21699385e-01]])))
+result = a_bit(decodificador.predict(np.array([[0.54632, 0.57643]])))
 print(result[0].reshape(7,5))
 
 plt.figure(2)
