@@ -15,7 +15,7 @@ for d in font1:
     Y.append(m)
     # agregamos versiones distorsionadas
     for i in range(10):
-        con_ruido = distorsionar(m, 0.3)
+        con_ruido = distorsionar(m, 0.1)
         X.append(con_ruido)
         Y.append(m)
         if not np.array_equal(m, con_ruido):
@@ -27,24 +27,36 @@ for d in font1:
 X = np.array(X)
 Y = np.array(Y)
 
-
-
-
-
 codificador=models.load_model("punto-2-codificador.keras")
 decodificador=models.load_model("punto-2-decodificador.keras")
 autoencoder1 = models.Sequential([codificador,decodificador])
 
-res = a_bit(autoencoder1.predict(X))
+#res = a_bit(autoencoder1.predict(X))
+res = autoencoder1.predict(X)
 
 cantErrores = 0
 for i in range(len(X)):
-    if not np.array_equal(Y[i], res[i]):
-        print("--------------------------------------   ")
-        print("Entrada:       ", X[i])
-        print("Salida Esperada", Y[i])
-        print("Salida Obtenida", res[i])
+    resultado = "Ok"
+    x = X[i].reshape(7,5)
+    y_esperada = Y[i].reshape(7,5)
+    y_obtenida = res[i].reshape(7,5)
+    if not np.array_equal(Y[i], a_bit(res)[i]):
+        resultado = "Falla"
+        # print("--------------------------------------   ")
         cantErrores += 1
+
+        #    if resultado == "Ok":
+        plt.clf()
+        plt.imshow(x,interpolation="nearest")
+        plt.savefig(f"punto-2-{i}-{resultado}-x.png")
+        
+        # plt.clf()
+        # plt.imshow(y_esperada,interpolation="nearest")
+        # plt.savefig(f"punto-2-{i}-{resultado}-y_esperada.png")
+        
+        plt.clf()
+        plt.imshow(y_obtenida,interpolation="nearest")
+        plt.savefig(f"punto-2-{i}-{resultado}-y_obtenida_{i}.png")
 
 
 print(f"cantidad de muestras con ruido: {cantidad_diferentes}/{len(X)}:: {cantidad_diferentes/len(X)*100}%")
