@@ -27,8 +27,8 @@ for d in font1:
 X = np.array(X)
 Y = np.array(Y)
 
-codificador=models.load_model("punto-1-codificador.keras")
-decodificador=models.load_model("punto-1-decodificador.keras")
+codificador=models.load_model("punto-2-codificador.keras")
+decodificador=models.load_model("punto-2-decodificador.keras")
 autoencoder1 = models.Sequential([codificador,decodificador])
 
 #res = a_bit(autoencoder1.predict(X))
