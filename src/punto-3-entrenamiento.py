@@ -39,19 +39,15 @@ utils.set_random_seed(2)
 
 
 n = 0.001
-epocas = 2000
+epocas = 1000
 
 codificador = models.Sequential()
 codificador.add(layers.Input(shape=(256,)))
 codificador.add(layers.Dense(128,activation = 'sigmoid'))
-# codificador.add(layers.Dense(64,activation = 'sigmoid'))
-# codificador.add(layers.Dense(32,activation = 'sigmoid'))
 codificador.add(layers.Dense(2, activation = 'sigmoid', name='latente'))
 
 decodificador = models.Sequential()
 decodificador.add(layers.Input(shape=(2,)))
-# decodificador.add(layers.Dense(32,activation = 'sigmoid'))
-# decodificador.add(layers.Dense(64,activation = 'sigmoid'))
 decodificador.add(layers.Dense(128,activation = 'sigmoid'))
 decodificador.add(layers.Dense(256,activation = 'sigmoid'))
 
@@ -63,35 +59,31 @@ autoencoder1 = models.Sequential([codificador,decodificador])
 autoencoder1.compile(loss = 'binary_crossentropy', optimizer = opt, metrics = [metrica])
 historia = autoencoder1.fit(X, Y, epochs = epocas, batch_size = 1)
 
-res = a_bit(autoencoder1.predict(X))
+res = autoencoder1.predict(X)
 
 cantErrores = 0
 for i in range(len(X)):
     x = X[i].reshape(16,16)
     y_esperada = Y[i].reshape(16,16)
     y_obtenida = res[i].reshape(16,16)
-    if not np.array_equal(Y[i], res[i]):
-        cantErrores += 1
-        resultado = "Falla"
-        num = str(i).zfill(3)
+    
+    num = str(i).zfill(3)
 
-        plt.clf()
-        plt.imshow(x,interpolation="nearest")
-        plt.savefig(f"punto-3-{num}-1-x.png")
+    plt.clf()
+    plt.imshow(x,interpolation="nearest")
+    plt.savefig(f"punto-3-{num}-1-x.png")
 
-        plt.clf()
-        plt.imshow(y_esperada,interpolation="nearest")
-        plt.savefig(f"punto-3-{num}-2-y_esperada.png")
+    plt.clf()
+    plt.imshow(y_esperada,interpolation="nearest")
+    plt.savefig(f"punto-3-{num}-2-y_esperada.png")
 
-        plt.clf()
-        plt.imshow(y_obtenida,interpolation="nearest")
-        plt.savefig(f"punto-3-{num}-3-y_obtenida_{i}.png")
+    plt.clf()
+    plt.imshow(y_obtenida,interpolation="nearest")
+    plt.savefig(f"punto-3-{num}-3-y_obtenida_{i}.png")
 
-# filename = str(n)+"_"+str(epocas)+"_"+activacion_latente
-archivo_base = f"{epocas}_{n}"
+loss = historia.history['loss'][-1]
 
-print(f"porcentaje de error: {cantErrores * 100 / len(X)}%")
-if cantErrores == 0:
+if loss < 0.003:
     codificador.save("punto-3-codificador.keras")
     decodificador.save("punto-3-decodificador.keras")
 

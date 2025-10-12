@@ -48,9 +48,9 @@ for i in range(len(X)):
     plt.imshow(x,interpolation="nearest")
     plt.savefig(f"punto-3-{num}-1-x.png")
 
-    plt.clf()
-    plt.imshow(y_esperada,interpolation="nearest")
-    plt.savefig(f"punto-3-{num}-2-y_esperada.png")
+    # plt.clf()
+    # plt.imshow(y_esperada,interpolation="nearest")
+    # plt.savefig(f"punto-3-{num}-2-y_esperada.png")
 
     plt.clf()
     plt.imshow(y_obtenida,interpolation="nearest")
